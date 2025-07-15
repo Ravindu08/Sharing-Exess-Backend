@@ -101,13 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'email' => $email
             ]);
         } else {
-            // If email fails, still create user but inform about email issue
+            // If email fails, still create user but inform about email issue (do NOT expose code)
             echo json_encode([
-                'success' => true, 
-                'message' => 'Registration successful! However, verification email could not be sent. Please contact support.',
-                'user_id' => $userId,
-                'email' => $email,
-                'verification_code' => $verificationCode // For testing purposes
+                'success' => false, 
+                'message' => 'Registration successful, but verification email could not be sent. Please contact support or try again later.'
             ]);
         }
     } else {
