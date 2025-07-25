@@ -18,8 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $data['email'] ?? '';
     $password = $data['password'] ?? '';
     $role = $data['role'] ?? 'recipient';
+    $phone_number = $data['phone_number'] ?? '';
+    $location = $data['location'] ?? '';
     
-    if (empty($name) || empty($email) || empty($password)) {
+    if (empty($name) || empty($email) || empty($password) || empty($phone_number) || empty($location)) {
         echo json_encode(['success' => false, 'message' => 'All fields are required']);
         exit;
     }
@@ -42,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     
     // Insert user with verification code
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, verification_code, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
-    $stmt->bind_param("sssss", $name, $email, $hashedPassword, $role, $verificationCode);
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, phone_number, location, verification_code, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+    $stmt->bind_param("sssssss", $name, $email, $hashedPassword, $role, $phone_number, $location, $verificationCode);
     
     if ($stmt->execute()) {
         $userId = $conn->insert_id;

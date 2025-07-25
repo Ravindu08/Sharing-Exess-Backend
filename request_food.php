@@ -18,13 +18,14 @@ $quantity = $data['quantity'] ?? '';
 $needed_by = $data['needed_by'] ?? null;
 $location = $data['location'] ?? '';
 
-if (!$listing_id || !$food_name || !$quantity) {
+// Only require listing_id if it's a request from a listing
+if ((!$food_name || !$quantity) || ($listing_id === '' && isset($data['listing_id']))) {
     echo json_encode(['success' => false, 'message' => 'Missing fields']);
     exit;
 }
 
 // For demo purposes, use a default recipient_id (you would get this from session in real app)
-$recipient_id = 2; // Default recipient ID
+$recipient_id = $data['recipient_id'] ?? 2; // Use provided recipient_id or fallback
 
 $stmt = $conn->prepare('INSERT INTO food_requests (recipient_id, food_name, quantity, needed_by, location) VALUES (?, ?, ?, ?, ?)');
 $stmt->bind_param('issss', $recipient_id, $food_name, $quantity, $needed_by, $location);

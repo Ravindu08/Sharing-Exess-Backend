@@ -4,9 +4,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 // Import PHPMailer classes
-require 'phpmailer/src/Exception.php';
-require 'phpmailer/src/PHPMailer.php';
-require 'phpmailer/src/SMTP.php';
+require __DIR__ . '/vendor/phpmailer/phpmailer/src/Exception.php';
+require __DIR__ . '/vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require __DIR__ . '/vendor/phpmailer/phpmailer/src/SMTP.php';
 
 class Mailer {
     private $mail;
@@ -18,13 +18,13 @@ class Mailer {
         $this->mail->isSMTP();
         $this->mail->Host       = 'smtp.gmail.com';
         $this->mail->SMTPAuth   = true;
-        $this->mail->Username   = 'muralitharanabinath7@gmail.com'; // SMTP email
-        $this->mail->Password   = 'eyurrhcpuwuiprvx'; // SMTP password
+        $this->mail->Username   = 'tharushagimhan01@gmail.com'; // SMTP email
+        $this->mail->Password   = 'tqqlngkrrzpuswrm'; // SMTP password
         $this->mail->SMTPSecure = 'ssl';
         $this->mail->Port       = 465;
         //ilergdrkkdycocoh - madhan password
 
-        $this->mail->setFrom('muralitharanabinath7@gmail.com', 'Sharing Excess');
+        $this->mail->setFrom('tharushagimhan01@gmail.com', 'Sharing Excess');
     }
 
     // Set email subject and message
