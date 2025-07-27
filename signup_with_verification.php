@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $data['email'] ?? '';
     $password = $data['password'] ?? '';
     $role = $data['role'] ?? 'recipient';
+    $phone_number = $data['phone_number'] ?? '';
+    $location = $data['location'] ?? '';
     
     if (empty($name) || empty($email) || empty($password)) {
         echo json_encode(['success' => false, 'message' => 'All fields are required']);
@@ -42,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     
     // Insert user with verification code
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, verification_code, status, created_at) VALUES (?, ?, ?, ?, ?, 'pending', NOW())");
-    $stmt->bind_param("sssss", $name, $email, $hashedPassword, $role, $verificationCode);
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role, phone_number, location, verification_code, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+    $stmt->bind_param("sssssss", $name, $email, $hashedPassword, $role, $phone_number, $location, $verificationCode);
     
     if ($stmt->execute()) {
         $userId = $conn->insert_id;
@@ -71,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p>Email Verification Required</p>
                 </div>
                 <div class='content'>
-                    <h2>Hello $name!</h2>
+                    <h2>Hello {$name}!</h2>
                     <p>Thank you for registering with Sharing Excess. To complete your registration, please verify your email address.</p>
                     
                     <div class='verification-code'>
@@ -98,7 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'success' => true, 
                 'message' => 'Registration successful! Please check your email for verification code.',
                 'user_id' => $userId,
-                'email' => $email
+                'email' => $email,
+                'name' => $name,
+                'role' => $role
             ]);
         } else {
             // If email fails, still create user but inform about email issue (do NOT expose code)

@@ -9,7 +9,7 @@ $users = [
     [
         'name' => 'Admin User',
         'email' => 'admin@sharingexcess.com',
-        'password' => hashPassword('admin123'),
+        'password' => 'admin123',
         'role' => 'admin',
         'status' => 'active'
     ],
