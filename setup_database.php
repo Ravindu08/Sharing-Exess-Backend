@@ -32,7 +32,7 @@ try {
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
-        role ENUM('donor', 'recipient') NOT NULL,
+        role ENUM('donor', 'recipient', 'admin', 'officer') NOT NULL,
         name VARCHAR(255) NOT NULL,
         status ENUM('active') DEFAULT 'active',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -72,7 +72,7 @@ try {
         quantity VARCHAR(100) NOT NULL,
         needed_by DATE,
         location VARCHAR(255),
-        status ENUM('pending', 'accepted', 'declined') DEFAULT 'pending',
+        status ENUM('pending', 'accepted', 'declined', 'picked_up', 'delivering', 'delivered') DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (recipient_id) REFERENCES users(id)
     )";

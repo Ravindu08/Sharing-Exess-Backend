@@ -21,12 +21,16 @@ if (!$email || !$password || !$role) {
     exit;
 }
 
-$stmt = $conn->prepare('SELECT id, email, password, role, name FROM users WHERE email = ? AND role = ?');
-$stmt->bind_param('ss', $email, $role);
+if ($email === 'admin@sharingexcess.com') {
+    $stmt = $conn->prepare('SELECT id, email, password, role, name FROM users WHERE email = ?');
+    $stmt->bind_param('s', $email);
+} else {
+    $stmt = $conn->prepare('SELECT id, email, password, role, name FROM users WHERE email = ? AND role = ?');
+    $stmt->bind_param('ss', $email, $role);
+}
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
-
 if ($user && password_verify($password, $user['password'])) {
     session_start();
     $_SESSION['user_id'] = $user['id'];
