@@ -1,4 +1,5 @@
 <?php
+//donate form
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -25,8 +26,27 @@ if (!$donor_id || !$food_name || !$quantity || !$expiry_date || !$location) {
     exit;
 }
 
-$stmt = $conn->prepare('INSERT INTO food_listings (donor_id, food_name, quantity, expiry_date, location) VALUES (?, ?, ?, ?, ?)');
-$stmt->bind_param('issss', $donor_id, $food_name, $quantity, $expiry_date, $location);
+// Validate expiry_date (must be today or future)
+$today = date('Y-m-d');
+if (strtotime($expiry_date) < strtotime($today)) {
+    echo json_encode(['success' => false, 'message' => 'Expiry date must be today or a future date']);
+    exit;
+}
+
+// Validate phone (must be 10 digits if provided)
+if ($contact_phone && !preg_match('/^\d{10}$/', $contact_phone)) {
+    echo json_encode(['success' => false, 'message' => 'Phone number must be exactly 10 digits']);
+    exit;
+}
+
+// Validate email (if provided)
+if ($contact_email && !filter_var($contact_email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid email format']);
+    exit;
+}
+
+$stmt = $conn->prepare('INSERT INTO food_listings (donor_id, food_name, quantity, expiry_date, location, description, contact_phone, contact_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+$stmt->bind_param('isssssss', $donor_id, $food_name, $quantity, $expiry_date, $location, $description, $contact_phone, $contact_email);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Listing added successfully']);
