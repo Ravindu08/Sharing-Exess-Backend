@@ -24,6 +24,19 @@ if (!$recipient_id || !$food_name || !$quantity || !$location) {
     exit;
 }
 
+// Restrict custom food requests to allowed options and quantity to positive integer (people)
+$allowed_foods = ['Rice', 'Bread', 'Noodles', 'Vegetables', 'Fruits', 'Snacks'];
+if (!$listing_id) {
+    if (!in_array($food_name, $allowed_foods)) {
+        echo json_encode(['success' => false, 'message' => 'Invalid food type. Only Rice, Bread, Noodles, Vegetables, Fruits, Snacks allowed.']);
+        exit;
+    }
+    if (!preg_match('/^\d+$/', $quantity) || intval($quantity) <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Quantity must be a positive number of people.']);
+        exit;
+    }
+}
+
 if ($listing_id) {
     // Check if the food listing is already requested
     $check = $conn->prepare('SELECT status FROM food_listings WHERE id = ?');
@@ -38,10 +51,10 @@ if ($listing_id) {
     // Insert request
     $stmt = $conn->prepare('INSERT INTO food_requests (recipient_id, listing_id, food_name, quantity, needed_by, location) VALUES (?, ?, ?, ?, ?, ?)');
     $stmt->bind_param('iissss', $recipient_id, $listing_id, $food_name, $quantity, $needed_by, $location);
-    // Mark food listing as requested
-    $update = $conn->prepare('UPDATE food_listings SET status = ? WHERE id = ?');
+    // Mark food listing as requested and record who requested
+    $update = $conn->prepare('UPDATE food_listings SET status = ?, requested_by = ? WHERE id = ?');
     $statusVal = 'requested';
-    $update->bind_param('si', $statusVal, $listing_id);
+    $update->bind_param('sii', $statusVal, $recipient_id, $listing_id);
     $update->execute();
 } else {
     // Custom request (no listing_id)

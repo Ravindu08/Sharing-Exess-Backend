@@ -19,11 +19,28 @@ if (!$request_id || !$recipient_id) {
     exit;
 }
 
+// Fetch listing_id before deleting the request
+$get_listing = $conn->prepare('SELECT listing_id FROM food_requests WHERE id = ? AND recipient_id = ?');
+$get_listing->bind_param('ii', $request_id, $recipient_id);
+$get_listing->execute();
+$result = $get_listing->get_result();
+$listing_id = null;
+if ($row = $result->fetch_assoc()) {
+    $listing_id = $row['listing_id'];
+}
+
 // Only allow delete if the request belongs to the recipient
 $stmt = $conn->prepare('DELETE FROM food_requests WHERE id = ? AND recipient_id = ?');
 $stmt->bind_param('ii', $request_id, $recipient_id);
 
 if ($stmt->execute() && $stmt->affected_rows > 0) {
+    if ($listing_id) {
+        // Set food listing as available and clear requested_by
+        $update = $conn->prepare('UPDATE food_listings SET status = ?, requested_by = NULL WHERE id = ?');
+        $status = 'available';
+        $update->bind_param('si', $status, $listing_id);
+        $update->execute();
+    }
     echo json_encode(['success' => true, 'message' => 'Request deleted successfully']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Failed to delete request or not authorized']);
