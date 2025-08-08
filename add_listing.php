@@ -25,8 +25,8 @@ if (!$donor_id || !$food_name || !$quantity || !$expiry_date || !$location) {
     exit;
 }
 
-$stmt = $conn->prepare('INSERT INTO food_listings (donor_id, food_name, quantity, expiry_date, location) VALUES (?, ?, ?, ?, ?)');
-$stmt->bind_param('issss', $donor_id, $food_name, $quantity, $expiry_date, $location);
+$stmt = $conn->prepare('INSERT INTO food_listings (donor_id, food_name, quantity, expiry_date, location, description, contact_phone, contact_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+$stmt->bind_param('isssssss', $donor_id, $food_name, $quantity, $expiry_date, $location, $description, $contact_phone, $contact_email);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Listing added successfully']);

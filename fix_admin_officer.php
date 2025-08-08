@@ -22,5 +22,5 @@ function hashPassword($password) {
         $stmt2->bind_param('sssss', $user['name'], $user['email'], $user['password'], $user['role'], $user['status']);
         $stmt2->execute();
     }
-}
+
 echo 'Admin and officer user fixed.';
