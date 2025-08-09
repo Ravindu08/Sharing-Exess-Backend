@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p>Email Verification Required</p>
                 </div>
                 <div class='content'>
-                    <h2>Hello $name!</h2>
+                    <h2>Hello {$name}!</h2>
                     <p>Thank you for registering with Sharing Excess. To complete your registration, please verify your email address.</p>
                     
                     <div class='verification-code'>
@@ -100,16 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'success' => true, 
                 'message' => 'Registration successful! Please check your email for verification code.',
                 'user_id' => $userId,
-                'email' => $email
+                'email' => $email,
+                'name' => $name,
+                'role' => $role
             ]);
         } else {
-            // If email fails, still create user but inform about email issue
+            // If email fails, still create user but inform about email issue (do NOT expose code)
             echo json_encode([
-                'success' => true, 
-                'message' => 'Registration successful! However, verification email could not be sent. Please contact support.',
-                'user_id' => $userId,
-                'email' => $email,
-                'verification_code' => $verificationCode // For testing purposes
+                'success' => false, 
+                'message' => 'Registration successful, but verification email could not be sent. Please contact support or try again later.'
             ]);
         }
     } else {

@@ -2,11 +2,11 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+    exit;
 }
 
 include 'db.php';
@@ -16,17 +16,22 @@ $email = $data['email'] ?? '';
 $password = $data['password'] ?? '';
 $role = $data['role'] ?? '';
 
-if (!$email || !$password || !$role) {
+// Remove role requirement for login
+if (!$email || !$password) {
     echo json_encode(['success' => false, 'message' => 'Missing fields']);
     exit;
 }
 
-$stmt = $conn->prepare('SELECT id, email, password, role, name FROM users WHERE email = ? AND role = ?');
-$stmt->bind_param('ss', $email, $role);
+if ($email === 'admin@sharingexcess.com') {
+    $stmt = $conn->prepare('SELECT id, email, password, role, name FROM users WHERE email = ?');
+    $stmt->bind_param('s', $email);
+} else {
+    $stmt = $conn->prepare('SELECT id, email, password, role, name FROM users WHERE email = ?');
+    $stmt->bind_param('s', $email);
+}
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
-
 if ($user && password_verify($password, $user['password'])) {
     session_start();
     $_SESSION['user_id'] = $user['id'];

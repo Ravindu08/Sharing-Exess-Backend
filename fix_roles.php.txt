@@ -1,0 +1,8 @@
+<?php
+require_once __DIR__ . '/db.php';
+
+$conn->query("UPDATE users SET role = 'admin' WHERE email = 'admin@sharingexcess.com'");
+$conn->query("UPDATE users SET role = 'officer' WHERE email = 'officer@sharingexcess.com'");
+
+echo "Roles fixed.\n";
+?>

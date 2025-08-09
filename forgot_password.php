@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -45,11 +46,11 @@ try {
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'tharushagimhan01@gmail.com'; // your Gmail
-    $mail->Password = 'tqqlngkrrzpuswrm'; // your app password
+    $mail->Username = 'your_gmail@gmail.com'; // your Gmail
+    $mail->Password = 'your_app_password'; // your app password
     $mail->SMTPSecure = 'tls';
     $mail->Port = 587;
-    $mail->setFrom('tharushagimhan01@gmail.com', 'Sharing Excess');
+    $mail->setFrom('your_gmail@gmail.com', 'Sharing Excess');
     $mail->addAddress($email, $user['name']);
     $mail->isHTML(true);
     $mail->Subject = 'Password Reset Code - Sharing Excess';
