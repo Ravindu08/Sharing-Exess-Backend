@@ -2,7 +2,13 @@
 header('Content-Type: application/json');
 include 'db.php';
 
-$donor_id = isset($_GET['donor_id']) ? intval($_GET['donor_id']) : (isset($_POST['donor_id']) ? intval($_POST['donor_id']) : 0);
+// Accept donor_id from JSON body, POST, or GET
+$data = json_decode(file_get_contents('php://input'), true);
+if (isset($data['donor_id'])) {
+    $donor_id = intval($data['donor_id']);
+} else {
+    $donor_id = isset($_GET['donor_id']) ? intval($_GET['donor_id']) : (isset($_POST['donor_id']) ? intval($_POST['donor_id']) : 0);
+}
 if (!$donor_id) {
     echo json_encode(['success' => false, 'message' => 'Missing donor_id']);
     exit;
